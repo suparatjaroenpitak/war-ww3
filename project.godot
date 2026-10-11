@@ -23,6 +23,7 @@ config/icon="res://icon.svg"
 Settings="*res://src/autoload/settings.gd"
 App="*res://src/autoload/app.gd"
 Session="*res://src/core/game_session.gd"
+Net="*res://src/net/net_manager.gd"
 
 [display]
 
@@ -34,7 +35,6 @@ window/stretch/aspect="expand"
 [internationalization]
 
 locale/translations=PackedStringArray("res://localization/strings.en.translation", "res://localization/strings.th.translation")
-locale/fallback="en"
 
 [rendering]
 

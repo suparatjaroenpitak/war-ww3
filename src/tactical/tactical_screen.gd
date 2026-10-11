@@ -14,6 +14,7 @@ const UNITS_MAX := 64
 
 var battle: TacticalBattle = null
 var _pending: Dictionary = {}
+var _from_campaign := false
 var _running := false
 var _speed := 1.0
 var _accum := 0.0
@@ -33,6 +34,7 @@ var _units_spin: SpinBox
 
 func _ready() -> void:
 	_pending = Session.pending_battle.duplicate()
+	_from_campaign = not _pending.is_empty()
 	_build()
 	_start_battle(TacticalBattle.DEFAULT_UNITS_PER_SIDE)
 
@@ -207,17 +209,9 @@ func _on_units_changed(value: float) -> void:
 
 
 func _on_return() -> void:
-	if _pending.is_empty() and _applied:
-		App.goto_main_menu()
-		return
-	# If we came from a campaign, go back to it; otherwise to the main menu.
-	if Session.state != null and Session.pending_battle.is_empty() and _was_campaign():
+	# Return to the campaign if this battle came from a live match, otherwise to
+	# the main menu.
+	if _from_campaign and Session.state != null:
 		App.goto_strategic()
 	else:
 		App.goto_main_menu()
-
-
-func _was_campaign() -> bool:
-	# A battle started from the campaign clears _pending after applying, so we
-	# track that we applied a result this session.
-	return _applied

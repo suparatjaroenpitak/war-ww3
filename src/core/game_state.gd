@@ -22,6 +22,9 @@ var scenario_id: String = "standard"
 var turn_number: int = 1
 var current_faction_id: String = ""
 var human_faction_id: String = ""
+## Every faction controlled by a human. Single-player has exactly one entry;
+## the authoritative multiplayer server adds one entry per connected player.
+var human_faction_ids: Array[String] = []
 var winner_id: String = ""
 var over: bool = false
 
@@ -32,10 +35,15 @@ var log := EventLog.new()
 var _faction_order: PackedStringArray = PackedStringArray()
 
 
-func setup(new_world: WorldData, human_faction: String, seed: int, scenario: String = "standard") -> void:
+func setup(new_world: WorldData, human_faction: String, seed: int, scenario: String = "standard", extra_humans: Array = []) -> void:
 	world = new_world
 	scenario_id = scenario
 	human_faction_id = human_faction
+	human_faction_ids = [human_faction]
+	for h in extra_humans:
+		var hid := str(h)
+		if hid != "" and hid not in human_faction_ids:
+			human_faction_ids.append(hid)
 	rng_seed = seed
 	_rng.seed = seed
 
@@ -49,7 +57,7 @@ func setup(new_world: WorldData, human_faction: String, seed: int, scenario: Str
 		f.name_key = base.name_key
 		f.description_key = base.description_key
 		f.color = base.color
-		f.is_ai = base.is_ai or base.id != human_faction
+		f.is_ai = not human_faction_ids.has(base.id)
 		f.passive = base.passive
 		f.credits = base.credits
 		f.manpower = base.manpower
@@ -99,7 +107,27 @@ func territory(id: String) -> Territory:
 
 
 func is_human_turn() -> bool:
-	return current_faction_id == human_faction_id
+	return human_faction_ids.has(current_faction_id)
+
+
+## Register a faction as human-controlled (used by the multiplayer server).
+func register_human(faction_id: String) -> void:
+	if not factions.has(faction_id):
+		return
+	if faction_id not in human_faction_ids:
+		human_faction_ids.append(faction_id)
+	factions[faction_id].is_ai = false
+
+
+## Unregister a human faction (player disconnected). Returns true if it was one.
+func unregister_human(faction_id: String) -> bool:
+	var idx := human_faction_ids.find(faction_id)
+	if idx == -1:
+		return false
+	human_faction_ids.remove_at(idx)
+	if factions.has(faction_id):
+		factions[faction_id].is_ai = true
+	return true
 
 
 func territories_owned_by(faction_id: String) -> Array:
@@ -248,7 +276,7 @@ func end_turn() -> void:
 	_resolve_faction(current_faction_id)
 	_advance()
 	var guard := 0
-	while not over and current_faction_id != human_faction_id:
+	while not over and not is_human_turn():
 		if guard > 100:
 			push_error("GameState: turn cycle guard exceeded")
 			break
@@ -287,33 +315,75 @@ func _roll() -> float:
 	return _rng.randf_range(0.85, 1.15)
 
 
+## A faction wins the campaign when it is the only faction still holding land.
 func _check_victory() -> void:
-	# Win: capture every non-unclaimed territory that is not your own; i.e. no
-	# other living faction still owns territory.
+	var owners: Array[String] = []
 	for fid in factions:
-		if fid == human_faction_id:
-			continue
 		var f: Faction = factions[fid]
 		if f.alive and territories_owned_by(fid).size() > 0:
-			return
-	winner_id = human_faction_id
+			owners.append(fid)
+	if owners.size() != 1:
+		return
+	winner_id = owners[0]
 	over = true
-	log.add_turn(turn_number, "EVENT_VICTORY", [factions[human_faction_id].name_key])
+	log.add_turn(turn_number, "EVENT_VICTORY", [factions[winner_id].name_key])
 	game_ended.emit(winner_id)
 
 
+## Defeat for the human side: when no human-controlled faction holds land.
 func check_defeat() -> void:
 	if over:
 		return
-	if territories_owned_by(human_faction_id).is_empty():
-		over = true
-		winner_id = ""
-		game_ended.emit("")
-		log.add_turn(turn_number, "EVENT_DEFEAT", [])
+	for hf in human_faction_ids:
+		if territories_owned_by(hf).size() > 0:
+			return
+	over = true
+	winner_id = ""
+	game_ended.emit("")
+	log.add_turn(turn_number, "EVENT_DEFEAT", [])
 
 
 func _fail(error_key: String) -> Dictionary:
 	return {"ok": false, "error": error_key}
+
+
+## Rebuild a GameState from a serialized dictionary produced by to_dict().
+## Every entry is validated against the world definition, so corrupt or
+## hostile data cannot inject unknown factions or territories.
+static func deserialize(world: WorldData, data: Dictionary) -> GameState:
+	var human := str(data.get("human_faction_id", ""))
+	var seed := int(data.get("rng_seed", 0))
+	var scenario := str(data.get("scenario_id", "standard"))
+	var state := GameState.new()
+	state.setup(world, human, seed, scenario)
+	state.turn_number = int(data.get("turn_number", 1))
+	state.current_faction_id = str(data.get("current_faction_id", human))
+	state.winner_id = str(data.get("winner_id", ""))
+	state.over = bool(data.get("over", false))
+
+	if typeof(data.get("human_faction_ids", null)) == TYPE_ARRAY:
+		var hids: Array[String] = []
+		for h in data["human_faction_ids"]:
+			var hid := str(h)
+			if world.factions.has(hid):
+				hids.append(hid)
+		if not hids.is_empty():
+			state.human_faction_ids = hids
+			for hid in hids:
+				state.register_human(hid)
+
+	var fdict: Dictionary = data.get("factions", {})
+	for fid in fdict:
+		if world.factions.has(fid) and state.factions.has(fid):
+			state.factions[fid] = Faction.from_dict(fdict[fid], world.factions[fid])
+
+	var tdict: Dictionary = data.get("territories", {})
+	for tid in tdict:
+		if world.territories.has(tid) and state.territories.has(tid):
+			state.territories[tid] = Territory.from_dict(tdict[tid], world.territories[tid])
+
+	state.log = EventLog.from_dict(data.get("event_log", []))
+	return state
 
 
 func to_dict() -> Dictionary:
@@ -329,6 +399,7 @@ func to_dict() -> Dictionary:
 		"turn_number": turn_number,
 		"current_faction_id": current_faction_id,
 		"human_faction_id": human_faction_id,
+		"human_faction_ids": human_faction_ids,
 		"winner_id": winner_id,
 		"over": over,
 		"rng_seed": rng_seed,

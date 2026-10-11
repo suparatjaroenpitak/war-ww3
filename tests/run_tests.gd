@@ -13,12 +13,15 @@ func _initialize() -> void:
 		"res://tests/test_world_data.gd",
 		"res://tests/test_economy.gd",
 		"res://tests/test_combat.gd",
+		"res://tests/test_tactical.gd",
 		"res://tests/test_game_state.gd",
 		"res://tests/test_ai.gd",
 		"res://tests/test_save_game.gd",
 		"res://tests/test_event_log.gd",
 		"res://tests/test_simulation_clock.gd",
 		"res://tests/test_localization.gd",
+		"res://tests/test_net_protocol.gd",
+		"res://tests/test_game_server.gd",
 	]
 	for path in suites:
 		var script := load(path)

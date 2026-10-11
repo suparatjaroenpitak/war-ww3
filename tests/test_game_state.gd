@@ -161,6 +161,42 @@ func test_commands_blocked_after_game_over() -> void:
 	assert_false(result.get("ok", false), "recruit blocked after victory")
 
 
+func test_apply_tactical_result_captures() -> void:
+	_setup()
+	var pair := _find_attack_pair()
+	assert_ne(pair.size(), 0, "an enemy adjacency exists")
+	var from: Territory = state.territory(pair[0])
+	var to: Territory = state.territory(pair[1])
+	from.divisions = 6
+	to.divisions = 2
+	var result: Dictionary = state.apply_tactical_result(pair[0], pair[1], true, 3, 2, 3)
+	assert_true(result.get("ok", false), "tactical result applied")
+	assert_eq(to.owner, "vessaria", "territory captured")
+	assert_eq(from.divisions, 3, "attacker losses deducted")
+	assert_eq(to.divisions, 3, "survivors garrison the territory")
+
+
+func test_apply_tactical_result_rejects_illegal_target() -> void:
+	_setup()
+	var result: Dictionary = state.apply_tactical_result("vess_capital", "kad_capital", true, 0, 0, 1)
+	assert_false(result.get("ok", false), "non-adjacent tactical attack rejected")
+	assert_eq(result.get("error", ""), "MSG_NOT_ADJACENT", "adjacency error returned")
+
+
+func test_apply_tactical_result_clamps_losses() -> void:
+	_setup()
+	var pair := _find_attack_pair()
+	assert_ne(pair.size(), 0, "an enemy adjacency exists")
+	var from: Territory = state.territory(pair[0])
+	var to: Territory = state.territory(pair[1])
+	from.divisions = 2
+	to.divisions = 1
+	var result: Dictionary = state.apply_tactical_result(pair[0], pair[1], false, 99, 99, 0)
+	assert_true(result.get("ok", false), "tactical result applied")
+	assert_eq(from.divisions, 0, "attacker losses clamped to available troops")
+	assert_eq(to.divisions, 0, "defender losses clamped to available troops")
+
+
 func test_territories_owned_by_filters_correctly() -> void:
 	_setup()
 	var owned: Array = state.territories_owned_by("vessaria")

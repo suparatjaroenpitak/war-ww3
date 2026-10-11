@@ -155,7 +155,23 @@ MULTIPLAYER_JOIN,Join Match,เข้าร่วมห้อง
 MULTIPLAYER_NICKNAME,Nickname,ชื่อเล่น
 MULTIPLAYER_ADDRESS,Address,ที่อยู่
 MULTIPLAYER_PORT,Port,พอร์ต
-MULTIPLAYER_NOTICE,LAN play is under development. Online matchmaking is not offered.,เลน LAN อยู่ระหว่างพัฒนา ยังไม่มีการจับคู่ออนไลน์
+MULTIPLAYER_NOTICE,LAN play is supported. Online matchmaking is not offered.,รองรับการเล่นผ่าน LAN ยังไม่มีการจับคู่ออนไลน์
+MULTIPLAYER_FACTION,Faction,ฝ่าย
+MULTIPLAYER_READY,Ready,พร้อม
+MULTIPLAYER_NOT_READY,Not ready,ยังไม่พร้อม
+MULTIPLAYER_START_MATCH,Start Match,เริ่มการแข่งขัน
+MULTIPLAYER_LOBBY,Lobby,ห้องรอ
+MULTIPLAYER_PLAYERS,Players,ผู้เล่น
+MULTIPLAYER_STATUS,Status,สถานะ
+MULTIPLAYER_HOSTING,Hosting on port %d,เปิดห้องที่พอร์ต %d
+MULTIPLAYER_JOINED,Joined as peer %d,เข้าร่วมในฐานะเพียร์ %d
+MULTIPLAYER_ERR_CREATE,Could not create the server,ไม่สามารถสร้างเซิร์ฟเวอร์ได้
+MULTIPLAYER_ERR_CONNECT,Could not connect,ไม่สามารถเชื่อมต่อได้
+MULTIPLAYER_DISCONNECTED,Disconnected,ตัดการเชื่อมต่อแล้ว
+MULTIPLAYER_BACK,Back,กลับ
+MULTIPLAYER_YOU,You,คุณ
+MULTIPLAYER_WAITING_HOST,Waiting for the host to start...,รอเจ้าภาพเริ่มการแข่งขัน...
+MULTIPLAYER_LEFT_THE_GAME,The connection was closed,การเชื่อมต่อถูกปิด
 
 TUTORIAL_TITLE,Tutorial,บทฝึกสอน
 TUTORIAL_STEP_1,Welcome commander. Click a territory to select it.,ยินดีต้อนรับผู้บัญชาการ คลิกดินแดนเพื่อเลือก

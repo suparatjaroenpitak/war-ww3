@@ -143,7 +143,7 @@ func _build() -> void:
 	_tactical_btn = UI.button(tr("TACTICAL_ATTACK_TACTICAL"))
 	_tactical_btn.pressed.connect(_on_attack_tactical)
 	_terr_actions_box.add_child(_tactical_btn)
-	side_box.add_child(_terr_actions_box)
+	# (_terr_actions_box was already parented to side_box by UI.vbox().)
 
 	# --- Bottom: event log ---------------------------------------------
 	var log_panel := UI.panel(root)

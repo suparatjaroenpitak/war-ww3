@@ -57,28 +57,7 @@ static func load_game(world: WorldData, slot: int) -> Dictionary:
 	if validation != "":
 		return {"ok": false, "error": "MSG_LOAD_FAILED", "detail": validation}
 
-	var state := GameState.new()
-	var human := str(migrated.get("human_faction_id", ""))
-	var seed := int(migrated.get("rng_seed", 0))
-	var scenario := str(migrated.get("scenario_id", "standard"))
-	state.setup(world, human, seed, scenario)
-	state.turn_number = int(migrated.get("turn_number", 1))
-	state.current_faction_id = str(migrated.get("current_faction_id", human))
-	state.winner_id = str(migrated.get("winner_id", ""))
-	state.over = bool(migrated.get("over", false))
-
-	var fdict: Dictionary = migrated.get("factions", {})
-	for fid in fdict:
-		if world.factions.has(fid) and state.factions.has(fid):
-			var base: Faction = world.factions[fid]
-			state.factions[fid] = Faction.from_dict(fdict[fid], base)
-
-	var tdict: Dictionary = migrated.get("territories", {})
-	for tid in tdict:
-		if world.territories.has(tid) and state.territories.has(tid):
-			state.territories[tid] = Territory.from_dict(tdict[tid], world.territories[tid])
-
-	state.log = EventLog.from_dict(migrated.get("event_log", []))
+	var state := GameState.deserialize(world, migrated)
 	return {"ok": true, "state": state}
 
 

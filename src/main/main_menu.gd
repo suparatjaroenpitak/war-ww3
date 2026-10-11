@@ -31,6 +31,7 @@ func _build() -> void:
 
 	box.add_child(_menu_button(tr("MENU_NEW_GAME"), _on_new_game))
 	box.add_child(_menu_button(tr("MENU_TUTORIAL"), _on_tutorial))
+	box.add_child(_menu_button(tr("MENU_TACTICAL"), _on_tactical_demo))
 
 	var continue_btn := _menu_button(tr("MENU_CONTINUE"), _on_continue)
 	continue_btn.disabled = not Session.has_save(0)
@@ -66,6 +67,12 @@ func _on_tutorial() -> void:
 	App.goto_scene("res://src/strategic/strategic_screen.tscn")
 
 
+func _on_tactical_demo() -> void:
+	# Launch a standalone demo battle (no campaign result is applied).
+	Session.pending_battle = {}
+	App.goto_tactical()
+
+
 func _on_continue() -> void:
 	var result := Session.load_slot(0)
 	if result.get("ok", false):
@@ -75,7 +82,7 @@ func _on_continue() -> void:
 
 
 func _on_multiplayer() -> void:
-	_show_notice(tr("MULTIPLAYER_COMING_SOON"))
+	App.goto_scene("res://src/net/multiplayer_screen.tscn")
 
 
 func _on_settings() -> void:
