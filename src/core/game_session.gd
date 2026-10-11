@@ -9,6 +9,11 @@ signal game_loaded(state: GameState)
 var state: GameState = null
 var default_seed: int = 20261011
 
+## Set by the strategic screen when the player chooses to fight an attack
+## tactically. The tactical screen reads it, simulates the battle, feeds the
+## result back into `state`, and clears it.
+var pending_battle: Dictionary = {}
+
 
 func start_new_game(faction_id: String, scenario: String = "standard", seed: int = 0) -> GameState:
 	var world := WorldData.load_default()

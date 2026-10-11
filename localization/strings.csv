@@ -132,6 +132,23 @@ COMMON_CLOSE,Close,ปิด
 MULTIPLAYER_COMING_SOON,Multiplayer is not available yet,โหมดผู้เล่นหลายคนยังไม่พร้อมใช้งาน
 TACTICAL_TITLE,Tactical Simulation,การจำลองการรบ
 TACTICAL_PLACEHOLDER,The tactical battle simulation is under development. Battles are currently resolved abstractly on the strategic map.,การจำลองการรบกำลังพัฒนา ปัจจุบันการรบจะถูกคำนวณอย่างย่อบนแผนที่ยุทธศาสตร์
+MENU_TACTICAL,Tactical Simulator,เครื่องจำลองการรบ
+TACTICAL_ATTACKER_STRENGTH,Attacker strength,กำลังฝ่ายโจมตี
+TACTICAL_DEFENDER_STRENGTH,Defender strength,กำลังฝ่ายตั้งรับ
+TACTICAL_OBJECTIVES,Objectives,จุดยึดครอง
+TACTICAL_TICK,Tick,รอบที่
+TACTICAL_UNITS,Units,หน่วย
+TACTICAL_MORALE,Morale,ขวัญกำลังใจ
+TACTICAL_SUPPLY,Supply,เสบียง
+TACTICAL_SPEED,Speed,ความเร็ว
+TACTICAL_RESTART,Restart,เริ่มใหม่
+TACTICAL_RETURN,Return,กลับ
+TACTICAL_RESUME,Resume,เล่นต่อ
+TACTICAL_DEMO_NOTE,Demo battle with configurable unit counts.,การรบตัวอย่างที่ปรับจำนวนหน่วยได้
+TACTICAL_ATTACK_TACTICAL,Fight tactical battle,รบด้วยการจำลองการรบ
+TACTICAL_RESULT_ATTACKER_WINS,The attacker carried the field,ฝ่ายโจมตียึดสนามรบได้
+TACTICAL_RESULT_DEFENDER_WINS,The defender held the field,ฝ่ายตั้งรับรักษาสนามรบไว้ได้
+TACTICAL_RESOLVED,Applying the tactical outcome...,กำลังนำผลการรบไปใช้...
 MULTIPLAYER_TITLE,Multiplayer,ผู้เล่นหลายคน
 MULTIPLAYER_HOST,Host Match,เปิดห้อง
 MULTIPLAYER_JOIN,Join Match,เข้าร่วมห้อง
