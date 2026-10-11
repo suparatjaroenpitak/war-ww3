@@ -20,6 +20,7 @@ var _terr_actions_box: VBoxContainer
 var _recruit_btn: Button
 var _develop_btn: Button
 var _attack_btn: Button
+var _tactical_btn: Button
 var _selection_hint: Label
 
 var _log_view: RichTextLabel
@@ -30,6 +31,7 @@ var _speed_btn: Button
 
 var _attack_mode := false
 var _attack_from := ""
+var _tactical_attack := false
 var _tutorial_step := 0  # 0 = tutorial inactive; 1..5 = active steps
 var _tutorial_label: Label
 
@@ -138,6 +140,9 @@ func _build() -> void:
 	_attack_btn = UI.button(tr("GAME_ATTACK"))
 	_attack_btn.pressed.connect(_on_attack)
 	_terr_actions_box.add_child(_attack_btn)
+	_tactical_btn = UI.button(tr("TACTICAL_ATTACK_TACTICAL"))
+	_tactical_btn.pressed.connect(_on_attack_tactical)
+	_terr_actions_box.add_child(_tactical_btn)
 	side_box.add_child(_terr_actions_box)
 
 	# --- Bottom: event log ---------------------------------------------
@@ -265,6 +270,7 @@ func _refresh_side_panel() -> void:
 	_recruit_btn.disabled = not (t.owner == state.human_faction_id and state.is_human_turn())
 	_develop_btn.disabled = _recruit_btn.disabled
 	_attack_btn.disabled = t.owner != state.human_faction_id or t.divisions <= 0 or not state.is_human_turn()
+	_tactical_btn.disabled = _attack_btn.disabled
 	_attack_btn.text = tr("GAME_ATTACK") if not _attack_mode else tr("GAME_SELECT_TARGET")
 
 
@@ -273,6 +279,9 @@ func _refresh_side_panel() -> void:
 # --------------------------------------------------------------------------
 
 func _on_territory_selected(id: String) -> void:
+	if _attack_mode and _tactical_attack:
+		_launch_tactical(_attack_from, id)
+		return
 	if _attack_mode:
 		var from := _attack_from
 		var result: Dictionary = state.attack(from, id)
@@ -317,10 +326,44 @@ func _on_attack() -> void:
 	var id := _map.selected_id
 	if id == "":
 		return
+	_tactical_attack = false
 	_attack_mode = true
 	_attack_from = id
 	_selection_hint.text = tr("GAME_SELECT_TARGET")
 	_attack_btn.text = tr("GAME_SELECT_TARGET")
+
+
+func _on_attack_tactical() -> void:
+	var id := _map.selected_id
+	if id == "":
+		return
+	_attack_mode = true
+	_tactical_attack = true
+	_attack_from = id
+	_selection_hint.text = tr("GAME_SELECT_TARGET")
+	_attack_btn.text = tr("GAME_SELECT_TARGET")
+
+
+## Validate the engagement, store it for the tactical screen, and switch scenes.
+func _launch_tactical(from_id: String, to_id: String) -> void:
+	_attack_mode = false
+	_tactical_attack = false
+	var legality := state.can_attack(from_id, to_id)
+	if not legality.get("ok", false):
+		_show_toast(tr(legality.get("error", "MSG_CANNOT_ATTACK")))
+		_refresh_all()
+		return
+	var from_t: Territory = state.territory(from_id)
+	var to_t: Territory = state.territory(to_id)
+	Session.pending_battle = {
+		"from_id": from_id,
+		"to_id": to_id,
+		"attacker_divisions": from_t.divisions,
+		"defender_divisions": to_t.divisions,
+		"terrain_defense": to_t.defense_multiplier(),
+		"seed": state.rng_seed ^ (state.turn_number * 31) ^ hash(from_id + to_id),
+	}
+	App.goto_tactical()
 
 
 func _on_end_turn() -> void:
