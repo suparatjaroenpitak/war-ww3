@@ -48,8 +48,8 @@ func _check_project_settings() -> void:
 	var icon: String = ProjectSettings.get_setting("application/config/icon", "")
 	_ok(icon != "" and ResourceLoader.exists(icon), "icon configured and exists")
 
-	# Autoloads.
-	var autoloads: Dictionary = ProjectSettings.get_setting("autoload", {})
+	# Autoloads (parsed from project.godot's [autoload] section).
+	var autoloads: Dictionary = _parse_autoloads("res://project.godot")
 	_ok(autoloads.size() >= 3, "autoloads configured: %d" % autoloads.size())
 	for name in autoloads:
 		var path: String = autoloads[name]
@@ -105,7 +105,7 @@ func _check_scripts() -> void:
 	var broken: Array[String] = []
 	for path in files:
 		var script = load(path)
-		if script == null:
+		if script == null or not script.can_instantiate():
 			broken.append(path)
 	_ok(broken.size() == 0, "all scripts compile" + ("" if broken.is_empty() else " (broken: " + ", ".join(broken) + ")"))
 
@@ -152,6 +152,29 @@ func _check_scenes() -> void:
 	]:
 		var scene = load(path)
 		_ok(scene != null and scene is PackedScene, "scene loads: " + path)
+
+
+func _parse_autoloads(path: String) -> Dictionary:
+	## Parse the [autoload] section of project.godot into a Dictionary.
+	var result := {}
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return result
+	var in_section := false
+	while not f.eof_reached():
+		var line := f.get_line().strip_edges()
+		if line.begins_with("["):
+			in_section = line == "[autoload]"
+			continue
+		if not in_section or not line.contains("=") or line.begins_with(";"):
+			continue
+		var parts := line.split("=", true, 1)
+		var entry_name := parts[0].strip_edges()
+		var entry_path := parts[1].strip_edges().trim_prefix("*").replace("\"", "")
+		if entry_name != "" and entry_path != "":
+			result[entry_name] = entry_path
+	f.close()
+	return result
 
 
 func _report() -> void:

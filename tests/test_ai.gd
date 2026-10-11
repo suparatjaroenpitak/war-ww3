@@ -40,7 +40,7 @@ func test_active_ai_acts() -> void:
 	var before := _snapshot()
 	AI_Controller.take_turn(state, "kadran")
 	var after := _snapshot()
-	var acted := before["credits"] != after["credits"] or before["owners"] != after["owners"] or before["divisions"] != after["divisions"]
+	var acted: bool = before["credits"] != after["credits"] or before["owners"] != after["owners"] or before["divisions"] != after["divisions"]
 	assert_true(acted, "AI changed something (recruit or attack)")
 
 

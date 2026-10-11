@@ -161,7 +161,7 @@ func test_all_code_keys_exist_in_csv() -> void:
 func test_dynamic_keys_exist() -> void:
 	_setup()
 	_build_key_map()
-	for preset in ["low", "medium", "high"]:
+	for preset: String in ["low", "medium", "high"]:
 		var key := "SETTINGS_PRESET_" + preset.to_upper()
 		assert_true(keys.has(key), "preset key exists: " + key)
 	for terrain_key in ["TERRAIN_PLAINS", "TERRAIN_FOREST", "TERRAIN_MOUNTAIN", "TERRAIN_DESERT", "TERRAIN_COAST", "TERRAIN_URBAN"]:

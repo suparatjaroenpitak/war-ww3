@@ -1,4 +1,4 @@
-class_name  WorldData2
+class_name WorldData
 extends RefCounted
 ## Data-driven world definition. Loads factions and territory seed data from
 ## JSON and generates deterministic territory polygons with Voronoi.
