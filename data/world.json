@@ -1,0 +1,32 @@
+{
+  "world": {
+    "name_key": "WORLD_AURELIA",
+    "width": 1600,
+    "height": 900
+  },
+  "factions": [
+    { "id": "vessaria",    "name_key": "FACTION_VESSARIA",    "description_key": "FACTION_VESSARIA_DESC",    "color": "#3f7fd0", "is_ai": false, "passive": false, "starting_credits": 120, "starting_manpower": 30 },
+    { "id": "kadran",      "name_key": "FACTION_KADRAN",      "description_key": "FACTION_KADRAN_DESC",      "color": "#d0553f", "is_ai": true,  "passive": false, "starting_credits": 100, "starting_manpower": 40 },
+    { "id": "orinth",      "name_key": "FACTION_ORINTH",      "description_key": "FACTION_ORINTH_DESC",      "color": "#4aa36a", "is_ai": true,  "passive": false, "starting_credits": 90,  "starting_manpower": 25 },
+    { "id": "independent", "name_key": "FACTION_INDEPENDENT", "description_key": "FACTION_INDEPENDENT_DESC", "color": "#8a94a6", "is_ai": true,  "passive": true,  "starting_credits": 40,  "starting_manpower": 20 }
+  ],
+  "territories": [
+    { "id": "vess_capital",   "name_key": "TERR_VESS_CAPITAL",   "continent": "vessaria", "terrain": "urban",    "site": [200, 300],  "population": 5200, "credits": 30, "manpower": 3, "owner": "vessaria",    "divisions": 3, "development": 2 },
+    { "id": "vess_granary",   "name_key": "TERR_VESS_GRANARY",   "continent": "vessaria", "terrain": "plains",   "site": [120, 560],  "population": 2600, "credits": 16, "manpower": 2, "owner": "vessaria",    "divisions": 1, "development": 1 },
+    { "id": "vess_highlands", "name_key": "TERR_VESS_HIGHLANDS", "continent": "vessaria", "terrain": "mountain", "site": [330, 170],  "population": 1800, "credits": 10, "manpower": 1, "owner": "vessaria",    "divisions": 1, "development": 1 },
+    { "id": "vess_port",      "name_key": "TERR_VESS_PORT",      "continent": "vessaria", "terrain": "coast",    "site": [150, 170],  "population": 2200, "credits": 18, "manpower": 2, "owner": "vessaria",    "divisions": 1, "development": 1 },
+    { "id": "vess_march",     "name_key": "TERR_VESS_MARCH",     "continent": "vessaria", "terrain": "plains",   "site": [330, 520],  "population": 1900, "credits": 12, "manpower": 1, "owner": "independent", "divisions": 1, "development": 1 },
+
+    { "id": "kad_capital",    "name_key": "TERR_KAD_CAPITAL",    "continent": "kadran",   "terrain": "urban",    "site": [700, 330],  "population": 5800, "credits": 32, "manpower": 4, "owner": "kadran",      "divisions": 3, "development": 2 },
+    { "id": "kad_industry",   "name_key": "TERR_KAD_INDUSTRY",   "continent": "kadran",   "terrain": "urban",    "site": [760, 620],  "population": 3200, "credits": 24, "manpower": 2, "owner": "kadran",      "divisions": 1, "development": 1 },
+    { "id": "kad_plains",     "name_key": "TERR_KAD_PLAINS",     "continent": "kadran",   "terrain": "plains",   "site": [560, 430],  "population": 2800, "credits": 14, "manpower": 2, "owner": "kadran",      "divisions": 1, "development": 1 },
+    { "id": "kad_riverlands", "name_key": "TERR_KAD_RIVERLANDS", "continent": "kadran",   "terrain": "plains",   "site": [560, 700],  "population": 2400, "credits": 14, "manpower": 2, "owner": "kadran",      "divisions": 1, "development": 1 },
+    { "id": "kad_frontier",   "name_key": "TERR_KAD_FRONTIER",   "continent": "kadran",   "terrain": "plains",   "site": [900, 250],  "population": 1600, "credits": 10, "manpower": 1, "owner": "independent", "divisions": 1, "development": 1 },
+    { "id": "kad_delta",      "name_key": "TERR_KAD_DELTA",      "continent": "kadran",   "terrain": "coast",    "site": [860, 760],  "population": 2000, "credits": 14, "manpower": 1, "owner": "independent", "divisions": 1, "development": 1 },
+
+    { "id": "ori_capital",    "name_key": "TERR_ORI_CAPITAL",    "continent": "orinth",   "terrain": "urban",    "site": [1230, 400], "population": 4800, "credits": 28, "manpower": 3, "owner": "orinth",      "divisions": 3, "development": 2 },
+    { "id": "ori_forest",     "name_key": "TERR_ORI_FOREST",     "continent": "orinth",   "terrain": "forest",   "site": [1150, 190], "population": 2200, "credits": 14, "manpower": 1, "owner": "orinth",      "divisions": 1, "development": 1 },
+    { "id": "ori_coast",      "name_key": "TERR_ORI_COAST",      "continent": "orinth",   "terrain": "coast",    "site": [1360, 620], "population": 2400, "credits": 18, "manpower": 2, "owner": "orinth",      "divisions": 1, "development": 1 },
+    { "id": "ori_ridge",      "name_key": "TERR_ORI_RIDGE",      "continent": "orinth",   "terrain": "mountain", "site": [1250, 760], "population": 1700, "credits": 10, "manpower": 1, "owner": "independent", "divisions": 1, "development": 1 }
+  ]
+}

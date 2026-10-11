@@ -1,8 +1,10 @@
 ; Engine configuration file.
-; WAR WW3 - developed for Godot 4.7.2-stable
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
 ;
-; This file is edited by the Godot editor. Prefer editing through the editor UI,
-; but it is safe to edit by hand for values that the editor does not rewrite.
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
@@ -13,20 +15,14 @@ config/description="WAR WW3 - a fictional global grand strategy game."
 config/version="0.1.0"
 run/main_scene="res://src/main/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/icon="res://icon.svg"
 boot_splash/show_image=false
+config/icon="res://icon.svg"
 
 [autoload]
 
 Settings="*res://src/autoload/settings.gd"
 App="*res://src/autoload/app.gd"
 Session="*res://src/core/game_session.gd"
-
-[debug]
-
-gdscript/warnings/untyped_declaration=0
-gdscript/warnings/unsafe_property_access=0
-gdscript/warnings/unsafe_method_access=0
 
 [display]
 
@@ -35,12 +31,8 @@ window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
-[internationalization]
-
-locale/fallback="en"
-
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-textures/canvas_textures/default_texture_filter=0

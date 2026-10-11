@@ -50,6 +50,7 @@ func setup(new_world: WorldData, human_faction: String, seed: int, scenario: Str
 		f.description_key = base.description_key
 		f.color = base.color
 		f.is_ai = base.is_ai or base.id != human_faction
+		f.passive = base.passive
 		f.credits = base.credits
 		f.manpower = base.manpower
 		f.alive = true
@@ -232,6 +233,7 @@ func end_turn() -> void:
 		_resolve_faction(fid)
 		_advance()
 		guard += 1
+	check_defeat()
 	if not over:
 		turn_number += 1
 		log.add_turn(turn_number, "EVENT_TURN_START", [turn_number])

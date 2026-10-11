@@ -7,6 +7,7 @@ var name_key: String = ""
 var description_key: String = ""
 var color: Color = Color.WHITE
 var is_ai: bool = true
+var passive: bool = false
 var credits: int = 0
 var manpower: int = 0
 var alive: bool = true
@@ -38,6 +39,7 @@ static func from_dict(d: Dictionary, base: Faction) -> Faction:
 	f.description_key = base.description_key
 	f.color = base.color
 	f.is_ai = base.is_ai
+	f.passive = base.passive
 	f.credits = int(d.get("credits", 0))
 	f.manpower = int(d.get("manpower", 0))
 	f.alive = bool(d.get("alive", true))

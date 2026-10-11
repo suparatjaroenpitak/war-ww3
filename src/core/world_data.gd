@@ -60,6 +60,7 @@ func build(data: Variant) -> bool:
 		f.description_key = str(fd.get("description_key", ""))
 		f.color = Color(str(fd.get("color", "#ffffff")))
 		f.is_ai = bool(fd.get("is_ai", true))
+		f.passive = bool(fd.get("passive", false))
 		f.credits = int(fd.get("starting_credits", 0))
 		f.manpower = int(fd.get("starting_manpower", 0))
 		factions[f.id] = f
