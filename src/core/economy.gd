@@ -32,7 +32,7 @@ static func resolve(faction: Faction, territories: Array) -> Dictionary:
 	for t in territories:
 		divisions += t.divisions
 	var up := upkeep(divisions)
-	var net := income["credits"] - up
+	var net: int = income["credits"] - up
 
 	faction.credits = max(0, faction.credits + net)
 	faction.manpower += income["manpower"]

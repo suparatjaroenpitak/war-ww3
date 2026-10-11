@@ -90,13 +90,15 @@ func _owner_color(owner: String) -> Color:
 func _gui_input(event: InputEvent) -> void:
 	if state == null:
 		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		var world_pos := (event.position - _offset) / _scale
-		var found := _territory_at(world_pos)
-		if found != "":
-			selected_id = found
-			queue_redraw()
-			territory_selected.emit(found)
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			var world_pos: Vector2 = (mb.position - _offset) / _scale
+			var found := _territory_at(world_pos)
+			if found != "":
+				selected_id = found
+				queue_redraw()
+				territory_selected.emit(found)
 
 
 func _territory_at(world_pos: Vector2) -> String:

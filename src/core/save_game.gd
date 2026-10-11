@@ -20,9 +20,11 @@ static func has_save(slot: int) -> bool:
 
 
 static func save_game(state: GameState, slot: int) -> Dictionary:
-	var err := DirAccess.make_dir_recursive_absolute(SAVE_DIR)
-	if err != OK and err != ERR_ALREADY_EXISTS:
-		return {"ok": false, "error": "MSG_SAVE_FAILED", "code": err}
+	var root := DirAccess.open("user://")
+	if root != null and not root.dir_exists("saves"):
+		var dir_err := root.make_dir_recursive("saves")
+		if dir_err != OK:
+			return {"ok": false, "error": "MSG_SAVE_FAILED", "code": dir_err}
 	var payload := JSON.stringify(state.to_dict(), "\t")
 	var file := FileAccess.open(slot_path(slot), FileAccess.WRITE)
 	if file == null:

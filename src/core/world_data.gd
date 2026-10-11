@@ -1,4 +1,4 @@
-class_name WorldData
+class_name  WorldData2
 extends RefCounted
 ## Data-driven world definition. Loads factions and territory seed data from
 ## JSON and generates deterministic territory polygons with Voronoi.
@@ -41,7 +41,7 @@ func build(data: Variant) -> bool:
 		push_error("WorldData: root of world.json must be an object")
 		return false
 
-	var world := data.get("world", {})
+	var world: Dictionary = data.get("world", {})
 	name_key = str(world.get("name_key", "WORLD_AURELIA"))
 	size = Vector2(float(world.get("width", 1600)), float(world.get("height", 900)))
 
@@ -60,7 +60,6 @@ func build(data: Variant) -> bool:
 		f.description_key = str(fd.get("description_key", ""))
 		f.color = Color(str(fd.get("color", "#ffffff")))
 		f.is_ai = bool(fd.get("is_ai", true))
-		f.passive = bool(fd.get("passive", false))
 		f.credits = int(fd.get("starting_credits", 0))
 		f.manpower = int(fd.get("starting_manpower", 0))
 		factions[f.id] = f

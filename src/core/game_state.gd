@@ -155,7 +155,7 @@ func develop(territory_id: String) -> Dictionary:
 		return _fail("MSG_NOT_ENOUGH_CREDITS")
 	f.credits -= cost
 	t.development += 1
-	log.add_turn(turn_number, "EVENT_DEVELOPED", [t.name_key])
+	log.add_turn(turn_number, "EVENT_DEVELOPED", [f.name_key, t.name_key])
 	state_changed.emit()
 	return {"ok": true, "territory": territory_id, "development": t.development}
 

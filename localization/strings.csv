@@ -2,6 +2,7 @@ keys,en,th
 APP_TITLE,WAR WW3,WAR WW3
 APP_SUBTITLE,A fictional global grand strategy game,เกมวางแผนกลยุทธ์ระดับโลกแบบสมมติ
 APP_VERSION,Version,เวอร์ชัน
+WORLD_AURELIA,Aurelia,ออเรเลีย
 
 MENU_NEW_GAME,New Campaign,เริ่มแคมเปญใหม่
 MENU_CONTINUE,Continue,เล่นต่อ
@@ -87,6 +88,7 @@ GAME_MAIN_MENU,Main Menu,เมนูหลัก
 GAME_EVENT_LOG,Event Log,บันทึกเหตุการณ์
 GAME_ATTACK,Attack,โจมตี
 GAME_RECRUIT,Recruit Division,เกณฑ์กองพล
+GAME_DEVELOP,Develop,พัฒนา
 GAME_SELECT_TARGET,Select an adjacent enemy territory,เลือกดินแดนศัตรูที่ติดกัน
 GAME_PAUSE,Pause,หยุด
 GAME_RESUME,Resume,เล่นต่อ
@@ -113,7 +115,7 @@ MSG_CANNOT_ATTACK,That territory cannot be attacked,ไม่สามารถ�
 MSG_TERRITORY_CAPTURED,You captured %s,คุณยึด %s ได้
 MSG_TERRITORY_LOST,You lost %s,คุณเสีย %s
 MSG_ATTACK_FAILED,The attack failed,การโจมตีล้มเหลว
-MSG_VICTORY,VICTORY,POB
+MSG_VICTORY,VICTORY,ชัยชนะ
 MSG_DEFEAT,DEFEAT,แพ้
 MSG_HUMAN_TURN,Your turn,ตาของคุณ
 MSG_AI_TURN,%s is moving,%s กำลังเคลื่อนไหว
@@ -128,6 +130,8 @@ COMMON_CANCEL,Cancel,ยกเลิก
 COMMON_CLOSE,Close,ปิด
 
 MULTIPLAYER_COMING_SOON,Multiplayer is not available yet,โหมดผู้เล่นหลายคนยังไม่พร้อมใช้งาน
+TACTICAL_TITLE,Tactical Simulation,การจำลองการรบ
+TACTICAL_PLACEHOLDER,The tactical battle simulation is under development. Battles are currently resolved abstractly on the strategic map.,การจำลองการรบกำลังพัฒนา ปัจจุบันการรบจะถูกคำนวณอย่างย่อบนแผนที่ยุทธศาสตร์
 MULTIPLAYER_TITLE,Multiplayer,ผู้เล่นหลายคน
 MULTIPLAYER_HOST,Host Match,เปิดห้อง
 MULTIPLAYER_JOIN,Join Match,เข้าร่วมห้อง
@@ -147,9 +151,20 @@ TUTORIAL_COMPLETE,Tutorial complete,บทฝึกสอนเสร็จส�
 EVENT_TURN_START,Turn %d begins,เทิร์นที่ %d เริ่มต้น
 EVENT_ECONOMY_CALCULATED,Economy resolved for %s,คำนวณเศรษฐกิจของ %s แล้ว
 EVENT_TERRITORY_CAPTURED,%s captured %s,%s ยึด %s ได้
+EVENT_TERRITORY_LOST,%s was lost,%s ถูกยึด
+EVENT_ATTACK_FAILED,Attack from %s on %s failed,การโจมตีจาก %s ไปยัง %s ล้มเหลว
 EVENT_RECRUITED,%s recruited a division in %s,%s เกณฑ์กองพลใน %s
+EVENT_DEVELOPED,%s developed %s,%s พัฒนา %s แล้ว
 EVENT_BANKRUPT,%s is bankrupt,%s ล้มละลาย
 EVENT_VICTORY,%s wins the campaign,%s ชนะแคมเปญ
+EVENT_DEFEAT,You were defeated,คุณพ่ายแพ้
 EVENT_GAME_STARTED,Campaign started,แคมเปญเริ่มต้น
+
+MSG_INVALID_TERRITORY,Invalid territory,ดินแดนไม่ถูกต้อง
+MSG_NOT_OWNER,Not your territory,ไม่ใช่ดินแดนของคุณ
+MSG_NO_DIVISIONS,No divisions here,ไม่มีกองพลในดินแดนนี้
+MSG_FRIENDLY,That territory is friendly,ดินแดนนั้นเป็นฝ่ายเดียวกัน
+MSG_NOT_ADJACENT,Not adjacent to your territory,ไม่ติดกับดินแดนของคุณ
+MSG_GAME_OVER,The campaign is over,แคมเปญจบแล้ว
 
 LOG_ENTERED,Entered %s,เข้าสู่ %s
