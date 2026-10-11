@@ -37,6 +37,8 @@ func test_passive_faction_does_nothing() -> void:
 
 func test_active_ai_acts() -> void:
 	_setup()
+	# Match the real end-turn flow: the acting faction must be current.
+	state.current_faction_id = "kadran"
 	var before := _snapshot()
 	AI_Controller.take_turn(state, "kadran")
 	var after := _snapshot()

@@ -102,6 +102,8 @@ static func validate(data: Dictionary) -> String:
 		return "missing territories"
 	if not data.has("factions") or typeof(data["factions"]) != TYPE_DICTIONARY:
 		return "missing factions"
+	if data["territories"].is_empty() or data["factions"].is_empty():
+		return "empty factions or territories"
 	var turn := int(data.get("turn_number", 0))
 	if turn < 0 or turn > 100000:
 		return "turn_number out of range"

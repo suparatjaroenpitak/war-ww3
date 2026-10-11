@@ -32,14 +32,16 @@ func entries() -> Array:
 
 
 func search(term: String) -> Array:
-	## Search the log by matching the localized text of each entry.
+	## Search the log by matching the localized text of each entry, or the raw
+	## event key (so searching works in any locale).
 	var results: Array = []
 	var t := term.strip_edges().to_lower()
 	if t.is_empty():
 		return _entries.duplicate()
 	for e in _entries:
 		var text := _localize(e).to_lower()
-		if text.contains(t):
+		var key := str(e.get("key", "")).to_lower()
+		if text.contains(t) or key.contains(t):
 			results.append(e)
 	return results
 

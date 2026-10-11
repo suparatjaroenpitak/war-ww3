@@ -27,14 +27,19 @@ func test_empty_search_returns_all() -> void:
 
 
 func test_search_matches_text() -> void:
+	# Pin the locale so the expected text is deterministic on any machine.
+	var prev := TranslationServer.get_locale()
+	TranslationServer.set_locale("en")
 	var log := EventLog.new()
 	log.add("EVENT_TERRITORY_CAPTURED", ["FACTION_KADRAN", "TERR_VESS_CAPITAL"])
 	log.add("EVENT_BANKRUPT", ["FACTION_ORINTH"])
-	# Without translations loaded, keys pass through; match on the raw key text.
-	var hits := log.search("CAPTURED")
+	var hits := log.search("captured")
 	assert_eq(hits.size(), 1, "one capture entry")
+	hits = log.search("EVENT_BANKRUPT")
+	assert_eq(hits.size(), 1, "raw key search works in any locale")
 	hits = log.search("nothing matches this")
 	assert_eq(hits.size(), 0, "no false positives")
+	TranslationServer.set_locale(prev)
 
 
 func test_roundtrip_serialization() -> void:

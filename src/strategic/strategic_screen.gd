@@ -30,6 +30,8 @@ var _speed_btn: Button
 
 var _attack_mode := false
 var _attack_from := ""
+var _tutorial_step := 0  # 0 = tutorial inactive; 1..5 = active steps
+var _tutorial_label: Label
 
 
 func _ready() -> void:
@@ -38,9 +40,12 @@ func _ready() -> void:
 		# No active game (scene opened directly): bounce back to the menu.
 		App.goto_main_menu()
 		return
+	if state.scenario_id == "tutorial":
+		_tutorial_step = 1
 	_build()
 	_connect_state()
 	_refresh_all()
+	_update_tutorial_text()
 
 
 func _build() -> void:
@@ -87,6 +92,13 @@ func _build() -> void:
 	var menu_btn := UI.button(tr("GAME_MAIN_MENU"))
 	menu_btn.pressed.connect(_on_main_menu)
 	top.add_child(menu_btn)
+
+	# --- Tutorial hint (only in the tutorial scenario) ------------------
+	if state.scenario_id == "tutorial":
+		var tut_panel := UI.panel(root)
+		_tutorial_label = UI.label("", 14)
+		_tutorial_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		tut_panel.add_child(_tutorial_label)
 
 	# --- Middle: map + right panel -------------------------------------
 	var middle := UI.hbox(root, 8)
@@ -266,6 +278,7 @@ func _on_territory_selected(id: String) -> void:
 		var result: Dictionary = state.attack(from, id)
 		_attack_mode = false
 		if result.get("ok", false):
+			_advance_tutorial(3)
 			if result.get("captured", false):
 				_show_toast(tr("MSG_TERRITORY_CAPTURED") % [tr(state.territory(id).name_key)])
 			else:
@@ -274,6 +287,7 @@ func _on_territory_selected(id: String) -> void:
 			_show_toast(tr(result.get("error", "MSG_CANNOT_ATTACK")))
 		_refresh_all()
 		return
+	_advance_tutorial(1)
 	_refresh_side_panel()
 
 
@@ -284,6 +298,8 @@ func _on_recruit() -> void:
 	var result: Dictionary = state.recruit(id)
 	if not result.get("ok", false):
 		_show_toast(tr(result.get("error", "MSG_NOT_ENOUGH_CREDITS")))
+	else:
+		_advance_tutorial(2)
 	_refresh_all()
 
 
@@ -309,6 +325,7 @@ func _on_attack() -> void:
 
 func _on_end_turn() -> void:
 	state.end_turn()
+	_advance_tutorial(4)
 	_refresh_all()
 
 
@@ -410,3 +427,24 @@ func _on_log_search(term: String) -> void:
 func _show_toast(message: String) -> void:
 	_selection_hint.text = message
 	_selection_hint.modulate = App.color_accent
+
+
+# --------------------------------------------------------------------------
+# Tutorial
+# --------------------------------------------------------------------------
+
+func _advance_tutorial(expected_step: int) -> void:
+	if _tutorial_step == 0 or _tutorial_step != expected_step:
+		return
+	_tutorial_step += 1
+	_update_tutorial_text()
+
+
+func _update_tutorial_text() -> void:
+	if _tutorial_label == null:
+		return
+	if _tutorial_step <= 0 or _tutorial_step > 5:
+		_tutorial_label.text = ""
+		return
+	_tutorial_label.text = tr("TUTORIAL_STEP_%d" % _tutorial_step)
+	_tutorial_label.modulate = App.color_accent

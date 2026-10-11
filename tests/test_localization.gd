@@ -141,7 +141,7 @@ func test_all_code_keys_exist_in_csv() -> void:
 	var pattern := "\"((?:"
 	for p in KEY_PREFIXES:
 		pattern += p + "|"
-	pattern = pattern.trim_suffix("|") + ")_[A-Z0-9_]+)\""
+	pattern = pattern.trim_suffix("|") + ")_[A-Z0-9](?:[A-Z0-9_]*[A-Z0-9])?)\""
 	var re := RegEx.new()
 	re.compile(pattern)
 	var missing: Array[String] = []

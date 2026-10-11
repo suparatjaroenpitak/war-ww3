@@ -79,15 +79,16 @@ func test_tampered_save_rejected_by_validation() -> void:
 	assert_ne(SaveGame.validate({}), "", "empty dict rejected")
 	assert_ne(SaveGame.validate({"human_faction_id": ""}), "", "missing human rejected")
 	assert_ne(SaveGame.validate({"human_faction_id": "vessaria"}), "", "missing territories rejected")
+	assert_ne(SaveGame.validate({"human_faction_id": "vessaria", "territories": {}}), "", "missing factions rejected")
 	assert_ne(SaveGame.validate({
 		"human_faction_id": "vessaria",
 		"territories": {},
 		"factions": {},
-	}), "", "missing factions rejected")
+	}), "", "empty territories and factions rejected")
 	assert_ne(SaveGame.validate({
 		"human_faction_id": "vessaria",
-		"territories": {},
-		"factions": {},
+		"territories": {"a": {}},
+		"factions": {"vessaria": {}},
 		"turn_number": -5,
 	}), "", "negative turn rejected")
 	assert_eq(SaveGame.validate({
