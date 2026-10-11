@@ -140,7 +140,7 @@ MULTIPLAYER_ADDRESS,Address,ที่อยู่
 MULTIPLAYER_PORT,Port,พอร์ต
 MULTIPLAYER_NOTICE,LAN play is under development. Online matchmaking is not offered.,เลน LAN อยู่ระหว่างพัฒนา ยังไม่มีการจับคู่ออนไลน์
 
-TUTORIAL_TITLE,Tutorial,Tบทฝึกสอน
+TUTORIAL_TITLE,Tutorial,บทฝึกสอน
 TUTORIAL_STEP_1,Welcome commander. Click a territory to select it.,ยินดีต้อนรับผู้บัญชาการ คลิกดินแดนเพื่อเลือก
 TUTORIAL_STEP_2,Select your Vessar Prime territory and press Recruit to raise a division.,เลือกดินแดน Vessar Prime แล้วกดเกณฑ์เพื่อสร้างกองพล
 TUTORIAL_STEP_3,Select an adjacent enemy territory and press Attack.,เลือกดินแดนศัตรูที่ติดกันแล้วกดโจมตี

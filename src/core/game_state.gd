@@ -189,14 +189,38 @@ func attack(from_id: String, to_id: String) -> Dictionary:
 	var atk_roll := _roll()
 	var def_roll := _roll()
 	var result := Combat.resolve(from.divisions, to.divisions, to.defense_multiplier(), atk_roll, def_roll)
+	return _apply_battle_result(from_id, to_id, result["captured"], result["attacker_losses"], result["defender_losses"], result["survivors"])
 
+
+## Apply a battle outcome that was decided outside Combat.resolve(), e.g. by the
+## tactical simulation. It re-runs the same legality checks as attack() so an
+## externally supplied result can never bypass ownership/adjacency rules, and it
+## clamps losses to the troops actually present.
+func apply_tactical_result(from_id: String, to_id: String, captured: bool, attacker_losses: int, defender_losses: int, survivors: int) -> Dictionary:
+	if over:
+		return _fail("MSG_GAME_OVER")
+	var legality := can_attack(from_id, to_id)
+	if not legality.get("ok", false):
+		return legality
+	var from: Territory = territories[from_id]
+	var to: Territory = territories[to_id]
+	var a_losses := clampi(attacker_losses, 0, from.divisions)
+	var d_losses := clampi(defender_losses, 0, to.divisions)
+	var surv := clampi(survivors, 1, maxi(1, from.divisions - a_losses)) if captured else from.divisions - a_losses
+	return _apply_battle_result(from_id, to_id, captured, a_losses, d_losses, surv)
+
+
+## Shared post-resolution mutation for attack() and apply_tactical_result().
+func _apply_battle_result(from_id: String, to_id: String, captured: bool, attacker_losses: int, defender_losses: int, survivors: int) -> Dictionary:
+	var from: Territory = territories[from_id]
+	var to: Territory = territories[to_id]
 	var prev_owner := to.owner
-	from.divisions -= result["attacker_losses"]
-	to.divisions -= result["defender_losses"]
+	from.divisions = maxi(0, from.divisions - attacker_losses)
+	to.divisions = maxi(0, to.divisions - defender_losses)
 
-	if result["captured"]:
+	if captured:
 		to.owner = current_faction_id
-		to.divisions = result["survivors"]
+		to.divisions = maxi(1, survivors)
 		log.add_turn(turn_number, "EVENT_TERRITORY_CAPTURED", [factions[current_faction_id].name_key, to.name_key])
 		if prev_owner == human_faction_id and prev_owner != current_faction_id:
 			log.add_turn(turn_number, "EVENT_TERRITORY_LOST", [to.name_key])
@@ -207,9 +231,9 @@ func attack(from_id: String, to_id: String) -> Dictionary:
 	_check_victory()
 	return {
 		"ok": true,
-		"captured": result["captured"],
-		"attacker_losses": result["attacker_losses"],
-		"defender_losses": result["defender_losses"],
+		"captured": captured,
+		"attacker_losses": attacker_losses,
+		"defender_losses": defender_losses,
 		"from": from_id,
 		"to": to_id,
 	}

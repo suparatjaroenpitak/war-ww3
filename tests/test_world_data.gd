@@ -57,6 +57,17 @@ func test_each_faction_owns_at_least_one_territory() -> void:
 		assert_gt(count, 0, "faction %s owns territory" % fid)
 
 
+func test_passive_flag_parsed_from_json() -> void:
+	_setup()
+	var independent: Faction = world.factions.get("independent")
+	assert_ne(independent, null, "independent faction present")
+	assert_true(independent.passive, "independent faction is passive (neutral militias)")
+	for fid in world.factions:
+		if fid == "independent":
+			continue
+		assert_false(world.factions[fid].passive, "major faction %s is not passive" % fid)
+
+
 func test_territory_yields_sane() -> void:
 	_setup()
 	for tid in world.territories:

@@ -175,7 +175,9 @@ func _on_back() -> void:
 
 
 func _rebuild() -> void:
-	# Rebuild the screen so labels reflect the newly selected language.
+	# Rebuild the screen so labels reflect the newly selected language. Remove
+	# children immediately (not queue_free) so old and new nodes never coexist.
 	for child in get_children():
-		child.queue_free()
+		remove_child(child)
+		child.free()
 	_build()
