@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- WAR WW3 original placeholder logo: stylized globe with frontline split -->
+  <rect width="128" height="128" rx="20" fill="#101725"/>
+  <circle cx="64" cy="64" r="42" fill="#1b2740" stroke="#3f7fd0" stroke-width="4"/>
+  <path d="M64 22 A42 42 0 0 1 64 106 A28 42 0 0 0 64 22 Z" fill="#3f7fd0" opacity="0.85"/>
+  <path d="M64 22 A42 42 0 0 0 64 106 A28 42 0 0 1 64 22 Z" fill="#d0553f" opacity="0.85"/>
+  <path d="M64 24 V104" stroke="#f2f4f8" stroke-width="3" stroke-dasharray="7 6"/>
+  <circle cx="64" cy="64" r="42" fill="none" stroke="#f2f4f8" stroke-width="3"/>
+  <path d="M22 64 H106" stroke="#f2f4f8" stroke-width="2" opacity="0.6"/>
+  <path d="M64 52 C44 52 36 64 64 64 C92 64 84 76 64 76" fill="none" stroke="#f2f4f8" stroke-width="2" opacity="0.6"/>
+</svg>
