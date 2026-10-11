@@ -117,7 +117,7 @@ func host_start_match() -> Dictionary:
 	return {"ok": true}
 
 
-func request_ready(ready: bool) -> Dictionary:
+func set_ready_state(ready: bool) -> Dictionary:
 	match role:
 		Role.HOST:
 			var r := server.set_ready(1, ready)

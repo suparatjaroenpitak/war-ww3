@@ -15,7 +15,7 @@ var _ready_btn: Button
 var _start_btn: Button
 var _back_btn: Button
 
-var _ready := false
+var _is_ready := false
 var _navigated := false
 
 
@@ -159,9 +159,9 @@ func _enter_lobby(as_host: bool) -> void:
 
 
 func _on_ready() -> void:
-	_ready = not _ready
-	_ready_btn.text = tr("MULTIPLAYER_READY") if _ready else tr("MULTIPLAYER_NOT_READY")
-	Net.request_ready(_ready)
+	_is_ready = not _is_ready
+	_ready_btn.text = tr("MULTIPLAYER_READY") if _is_ready else tr("MULTIPLAYER_NOT_READY")
+	Net.set_ready_state(_is_ready)
 
 
 func _on_start() -> void:

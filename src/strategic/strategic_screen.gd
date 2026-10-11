@@ -32,6 +32,7 @@ var _speed_btn: Button
 var _attack_mode := false
 var _attack_from := ""
 var _tactical_attack := false
+var _game_over_shown := false
 var _tutorial_step := 0  # 0 = tutorial inactive; 1..5 = active steps
 var _tutorial_label: Label
 
@@ -46,8 +47,28 @@ func _ready() -> void:
 		_tutorial_step = 1
 	_build()
 	_connect_state()
+	# Multiplayer: react to authoritative snapshots and command replies.
+	if not Net.state_updated.is_connected(_on_net_state_changed):
+		Net.state_updated.connect(_on_net_state_changed)
+	if not Net.command_resolved.is_connected(_on_net_command_resolved):
+		Net.command_resolved.connect(_on_net_command_resolved)
 	_refresh_all()
 	_update_tutorial_text()
+
+
+## The faction this client controls. In single-player that is the campaign's
+## human faction; online it is the faction the server assigned to this peer.
+func _my_faction() -> String:
+	if Net.is_online():
+		return Net.local_faction
+	return state.human_faction_id
+
+
+## Whether it is currently this client's turn to act.
+func _my_turn() -> bool:
+	if Net.is_online():
+		return state.current_faction_id == Net.local_faction
+	return state.is_human_turn()
 
 
 func _build() -> void:
@@ -191,7 +212,7 @@ func _refresh_all() -> void:
 
 
 func _refresh_top_bar() -> void:
-	var f: Faction = state.faction(state.human_faction_id)
+	var f: Faction = state.faction(_my_faction())
 	if f == null:
 		return
 	_faction_label.text = f.display_name()
@@ -205,7 +226,7 @@ func _refresh_top_bar() -> void:
 		divisions += t.divisions
 	_upkeep_label_refresh(f, income, divisions, owned.size())
 
-	if not state.is_human_turn():
+	if not _my_turn():
 		var cur: Faction = state.faction(state.current_faction_id)
 		if cur != null:
 			_selection_hint.text = tr("MSG_AI_TURN") % [cur.display_name()]
@@ -267,9 +288,10 @@ func _refresh_side_panel() -> void:
 		tr("GAME_ADJACENT"), neighbors_text,
 	]
 	_terr_actions_box.visible = true
-	_recruit_btn.disabled = not (t.owner == state.human_faction_id and state.is_human_turn())
+	var mine := _my_faction()
+	_recruit_btn.disabled = not (t.owner == mine and _my_turn())
 	_develop_btn.disabled = _recruit_btn.disabled
-	_attack_btn.disabled = t.owner != state.human_faction_id or t.divisions <= 0 or not state.is_human_turn()
+	_attack_btn.disabled = t.owner != mine or t.divisions <= 0 or not _my_turn()
 	_tactical_btn.disabled = _attack_btn.disabled
 	_attack_btn.text = tr("GAME_ATTACK") if not _attack_mode else tr("GAME_SELECT_TARGET")
 
@@ -284,8 +306,12 @@ func _on_territory_selected(id: String) -> void:
 		return
 	if _attack_mode:
 		var from := _attack_from
-		var result: Dictionary = state.attack(from, id)
+		var result: Dictionary = Net.submit_command({"kind": "attack", "from": from, "to": id})
 		_attack_mode = false
+		if result.get("pending", false):
+			# Client: wait for the authoritative result and snapshot.
+			_refresh_all()
+			return
 		if result.get("ok", false):
 			_advance_tutorial(3)
 			if result.get("captured", false):
@@ -304,7 +330,10 @@ func _on_recruit() -> void:
 	var id := _map.selected_id
 	if id == "":
 		return
-	var result: Dictionary = state.recruit(id)
+	var result: Dictionary = Net.submit_command({"kind": "recruit", "territory": id})
+	if result.get("pending", false):
+		_refresh_all()
+		return
 	if not result.get("ok", false):
 		_show_toast(tr(result.get("error", "MSG_NOT_ENOUGH_CREDITS")))
 	else:
@@ -316,7 +345,10 @@ func _on_develop() -> void:
 	var id := _map.selected_id
 	if id == "":
 		return
-	var result: Dictionary = state.develop(id)
+	var result: Dictionary = Net.submit_command({"kind": "develop", "territory": id})
+	if result.get("pending", false):
+		_refresh_all()
+		return
 	if not result.get("ok", false):
 		_show_toast(tr(result.get("error", "MSG_NOT_ENOUGH_CREDITS")))
 	_refresh_all()
@@ -348,6 +380,12 @@ func _on_attack_tactical() -> void:
 func _launch_tactical(from_id: String, to_id: String) -> void:
 	_attack_mode = false
 	_tactical_attack = false
+	if Net.is_online():
+		# Tactical battles are resolved locally and cannot be trusted by the
+		# server, so online matches use abstract resolution only.
+		_show_toast(tr("TACTICAL_ONLINE_UNAVAILABLE"))
+		_refresh_all()
+		return
 	var legality := state.can_attack(from_id, to_id)
 	if not legality.get("ok", false):
 		_show_toast(tr(legality.get("error", "MSG_CANNOT_ATTACK")))
@@ -367,7 +405,7 @@ func _launch_tactical(from_id: String, to_id: String) -> void:
 
 
 func _on_end_turn() -> void:
-	state.end_turn()
+	Net.submit_command({"kind": "end_turn"})
 	_advance_tutorial(4)
 	_refresh_all()
 
@@ -378,6 +416,7 @@ func _on_save() -> void:
 
 
 func _on_main_menu() -> void:
+	Net.close()
 	App.goto_main_menu()
 
 
@@ -408,8 +447,11 @@ func _on_turn_changed(_turn: int) -> void:
 
 
 func _on_game_ended(winner_id: String) -> void:
+	if _game_over_shown:
+		return
+	_game_over_shown = true
 	var text := tr("MSG_DEFEAT")
-	if winner_id == state.human_faction_id:
+	if winner_id == _my_faction():
 		text = tr("MSG_VICTORY")
 	var d := AcceptDialog.new()
 	d.title = tr("APP_TITLE")
@@ -421,8 +463,34 @@ func _on_game_ended(winner_id: String) -> void:
 
 
 func _on_game_over_confirmed() -> void:
+	Net.close()
 	Session.clear_state()
 	App.goto_main_menu()
+
+
+# --------------------------------------------------------------------------
+# Multiplayer callbacks
+# --------------------------------------------------------------------------
+
+## A fresh authoritative snapshot arrived: re-point at the new state object and
+## refresh. The snapshot replaces the whole GameState, so signals are rewired.
+func _on_net_state_changed() -> void:
+	var new_state: GameState = Session.state
+	if new_state == null:
+		return
+	state = new_state
+	_connect_state()
+	_refresh_all()
+	if state.over and not _game_over_shown:
+		_on_game_ended(state.winner_id)
+
+
+func _on_net_command_resolved(result: Dictionary) -> void:
+	if not result.get("ok", false):
+		var reason := str(result.get("error", ""))
+		if reason != "":
+			_show_toast(tr(reason))
+	_refresh_all()
 
 
 # --------------------------------------------------------------------------

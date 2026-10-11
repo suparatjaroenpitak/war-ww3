@@ -149,6 +149,7 @@ TACTICAL_ATTACK_TACTICAL,Fight tactical battle,รบด้วยการจำ
 TACTICAL_RESULT_ATTACKER_WINS,The attacker carried the field,ฝ่ายโจมตียึดสนามรบได้
 TACTICAL_RESULT_DEFENDER_WINS,The defender held the field,ฝ่ายตั้งรับรักษาสนามรบไว้ได้
 TACTICAL_RESOLVED,Applying the tactical outcome...,กำลังนำผลการรบไปใช้...
+TACTICAL_ONLINE_UNAVAILABLE,Tactical battles are only available offline,การรบแบบจำลองใช้ได้เฉพาะโหมดออฟไลน์
 MULTIPLAYER_TITLE,Multiplayer,ผู้เล่นหลายคน
 MULTIPLAYER_HOST,Host Match,เปิดห้อง
 MULTIPLAYER_JOIN,Join Match,เข้าร่วมห้อง
